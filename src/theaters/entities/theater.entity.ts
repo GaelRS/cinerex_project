@@ -1,17 +1,20 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Projection } from 'src/projections/entities/projection.entity';
+import { FunctionEntity } from 'src/functions/entities/function.entity';
 
 @Entity('theaters')
 export class Theater {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  theaterId: string;
 
-  @Column('text')
-  name: string; // e.g., 'Theater 1'
+  @Column('text', { unique: true })
+  theaterName: string;
 
-  @Column('integer')
-  capacity: number;
+  @Column('char', { length: 1 })
+  last_row_letter: string;
 
-  @OneToMany(() => Projection, projection => projection.theater)
-  projections: Projection[];
+  @Column('int')
+  last_seat_number: number;
+
+  @OneToMany(() => FunctionEntity, (func) => func.theater)
+  functions: FunctionEntity[];
 }
