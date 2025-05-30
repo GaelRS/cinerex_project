@@ -2,12 +2,13 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { CustomersModule } from "./customers/customers.module";
 import { FunctionsModule } from "./functions/functions.module";
 import { TheatersModule } from "./theaters/theaters.module";
-import { ProjectionsModule } from "./projections/projections.module";
 import { TicketsModule } from "./tickets/tickets.module";
 import {ConfigModule} from "@nestjs/config"
+import { UsersModule } from './users/users.module';
+import { MoviesModule } from './movies/movies.module';
+import { SeatsModule } from './seats/seats.module';
 
 @Module({
   imports: [
@@ -23,11 +24,13 @@ import {ConfigModule} from "@nestjs/config"
       autoLoadEntities: true,
       synchronize: true,
     }),
-    CustomersModule,
+    UsersModule,
     FunctionsModule,
     TheatersModule,
-    ProjectionsModule,
     TicketsModule,
+    UsersModule,
+    MoviesModule,
+    SeatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

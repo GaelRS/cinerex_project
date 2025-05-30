@@ -1,17 +1,34 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Projection } from 'src/projections/entities/projection.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Movie } from 'src/movies/entities/movie.entity';
+import { Theater } from 'src/theaters/entities/theater.entity';
+import { Seat } from 'src/seats/entities/seat.entity';
+import { Ticket } from 'src/tickets/entities/ticket.entity';
 
 @Entity('functions')
-export class Function {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class FunctionEntity {
+  @PrimaryGeneratedColumn('uuid')
+  functionId: string;
 
-  @Column('text')
-  title: string;
+  @ManyToOne(() => Movie, (movie) => movie.functions, { eager: true })
+  @JoinColumn({ name: 'movieId' })
+  movie: Movie;
 
-  @Column('integer')
-  duration: number; // in minutes
+  @Column('uuid')
+  movieId: string;
 
-  @OneToMany(() => Projection, projection => projection.function)
-  projections: Projection[];
+  @ManyToOne(() => Theater, (theater) => theater.functions, { eager: true })
+  @JoinColumn({ name: 'theaterId' })
+  theater: Theater;
+
+  @Column('uuid')
+  theaterId: string;
+
+  @Column('timestamp')
+  datetime: Date;
+
+  @OneToMany(() => Seat, (seat) => seat.function)
+  seats: Seat[];
+
+  @OneToMany(() => Ticket, (ticket) => ticket.function)
+  tickets: Ticket[];
 }

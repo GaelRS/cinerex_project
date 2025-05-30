@@ -2,10 +2,9 @@ import { Module } from '@nestjs/common';
 import { FunctionsService } from './functions.service';
 import { FunctionsController } from './functions.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Function } from './entities/function.entity';
-
+import { FunctionEntity } from './entities/function.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Function])], 
+  imports: [TypeOrmModule.forFeature([FunctionEntity])], 
   controllers: [FunctionsController],
   providers: [FunctionsService],
 })
