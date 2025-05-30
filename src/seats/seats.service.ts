@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
-import { CreateSeatDto } from './dto/create-seat.dto';
-import { UpdateSeatDto } from './dto/update-seat.dto';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Seat, SeatStatus } from './entities/seat.entity';
 
 @Injectable()
 export class SeatsService {
-  create(createSeatDto: CreateSeatDto) {
-    return 'This action adds a new seat';
+  constructor(
+    @InjectRepository(Seat)
+    private readonly seatRepository: Repository<Seat>,
+  ) {}
+
+  async generateSeatsForFunction(functionId: string) {
+    const rows = 'ABCDEFGHIJ';
+    const seats: Seat[] = [];
+
+    for (const row of rows) {
+      for (let num = 1; num <= 10; num++) {
+        seats.push(this.seatRepository.create({
+          functionId,
+          row_letter: row,
+          seat_number: num,
+          status: SeatStatus.AVAILABLE
+        }));
+      }
+    }
+
+    return this.seatRepository.save(seats);
   }
 
-  findAll() {
-    return `This action returns all seats`;
+  async getSeatsByFunction(functionId: string) {
+    return this.seatRepository.find({
+      where: { functionId },
+      order: { row_letter: 'ASC', seat_number: 'ASC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} seat`;
-  }
+  async sellSeat(functionId: string, row: string, number: number) {
+    const seat = await this.seatRepository.findOneBy({
+      functionId,
+      row_letter: row,
+      seat_number: number
+    });
 
-  update(id: number, updateSeatDto: UpdateSeatDto) {
-    return `This action updates a #${id} seat`;
-  }
+    if (!seat) throw new NotFoundException('Seat not found');
+    if (seat.status !== SeatStatus.AVAILABLE)
+      throw new BadRequestException('Seat is not available');
 
-  remove(id: number) {
-    return `This action removes a #${id} seat`;
+    seat.status = SeatStatus.SOLD;
+    return this.seatRepository.save(seat);
   }
 }
