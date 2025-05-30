@@ -6,7 +6,7 @@ export class Seat {
   @PrimaryGeneratedColumn('uuid')
   seatId: string;
 
-  @ManyToOne(() => FunctionEntity, (func) => func.seats)
+  //@ManyToOne(() => FunctionEntity, (func) => func.seats)
   @JoinColumn({ name: 'functionId' })
   function: FunctionEntity;
 
