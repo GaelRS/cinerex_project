@@ -73,6 +73,11 @@ export class FunctionsService {
 
   async remove(id: string) {
     const func = await this.findOne(id);
+    
+    // remove seats associated with the function
+    await this.seatsService.deleteSeatsForFunction(id);
+    
+    // remove the function itself
     await this.functionRepository.delete({ functionId: id });
     return {
       message: `Function with ID ${id} deleted`,
