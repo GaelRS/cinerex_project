@@ -20,8 +20,8 @@ export class UsersService {
     return this.userRepository.save(newUser);
   }
 
-  async loginUser(userEmail: string, userPassword: string) {
-    const user = await this.userRepository.findOne({ where: { userEmail } });
+  async loginUser(userName: string, userPassword: string) {
+    const user = await this.userRepository.findOne({ where: { userName } });
 
     if (!user) {
       throw new Error("Usuario no encontrado");

@@ -28,7 +28,7 @@ export class UsersController {
   @UsePipes(new ValidationPipe({ whitelist: true }))
   login(@Body() loginUserDto: LoginUserDto) {
     return this.usersService.loginUser(
-      loginUserDto.userEmail,
+      loginUserDto.userName,
       loginUserDto.userPassword
     );
   }
