@@ -1,26 +1,42 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "./entities/user.entity";
+import { Repository } from "typeorm";
+import * as bcrypt from "bcrypt";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+    private jwtService: JwtService
+  ) {}
+
+  registerUser(createUserDto: CreateUserDto) {
+    createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
+    const newUser = this.userRepository.create(createUserDto);
+    return this.userRepository.save(newUser);
   }
 
-  findAll() {
-    return `This action returns all users`;
-  }
+  async loginUser(userEmail: string, userPassword: string) {
+    const user = await this.userRepository.findOne({ where: { userEmail } });
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    if (!user) {
+      throw new Error("Usuario no encontrado");
+    }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    const match = await bcrypt.compare(userPassword, user.userPassword);
+    if (!match) {
+      throw new UnauthorizedException("Contraseña incorrecta");
+    }
+    const payload ={
+      userEmail: user.userEmail,
+      userPassword: user.userPassword,
+      userRole: user.userRole,
+    }
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 }
