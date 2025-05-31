@@ -4,6 +4,7 @@ import { UpdateFunctionDto } from './dto/update-function.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FunctionEntity } from './entities/function.entity';
+import { SeatsService } from 'src/seats/seats.service';
 
 @Injectable()
 export class FunctionsService {
@@ -11,23 +12,37 @@ export class FunctionsService {
   constructor(
     @InjectRepository(FunctionEntity)
     private readonly functionRepository: Repository<FunctionEntity>,
+    private readonly seatsService: SeatsService, // Manage seats
   ) {}
 
   async create(createFunctionDto: CreateFunctionDto) {
     const newFunction = this.functionRepository.create(createFunctionDto);
-    return await this.functionRepository.save(newFunction);
+    const savedFunction = await this.functionRepository.save(newFunction);
+
+    await this.seatsService.generateSeatsForFunction(savedFunction.functionId);
+    return savedFunction;
   }
 
   findAll() {
     return this.functionRepository.find({
-      //relations: ['movie', 'theater', 'seats', 'tickets'],
+      relations: [
+        'movie', 
+        'theater', 
+        'seats', 
+        //'tickets'
+      ],
     });
   }
 
   async findOne(id: string) {
     const func = await this.functionRepository.findOne({
       where: { functionId: id },
-      //relations: ['movie', 'theater', 'seats', 'tickets'],
+      relations: [
+        'movie', 
+        'theater', 
+        'seats', 
+        //'tickets'
+      ],
     });
     if (!func) {
       throw new Error(`Function with ID ${id} not found`);
@@ -38,7 +53,12 @@ export class FunctionsService {
   async findByMovie(id: string) {
     return await this.functionRepository.find({
       where: { movieId: id },
-      //relations: ['movie', 'theater', 'seats', 'tickets'],
+      relations: [
+        'movie', 
+        'theater', 
+        'seats', 
+        //'tickets'
+      ],
     });
   }
 
@@ -53,6 +73,11 @@ export class FunctionsService {
 
   async remove(id: string) {
     const func = await this.findOne(id);
+    
+    // remove seats associated with the function
+    await this.seatsService.deleteSeatsForFunction(id);
+    
+    // remove the function itself
     await this.functionRepository.delete({ functionId: id });
     return {
       message: `Function with ID ${id} deleted`,

@@ -16,18 +16,18 @@ export class FunctionEntity {
   @Column('uuid')
   movieId: string;
 
-  //@ManyToOne(() => Theater, (theater) => theater.functions, { eager: true })
-  //@JoinColumn({ name: 'theaterId' })
-  //theater: Theater;
+  @ManyToOne(() => Theater, (theater) => theater.functions, { eager: true })
+  @JoinColumn({ name: 'theaterId' })
+  theater: Theater;
 
   @Column('uuid')
   theaterId: string;
 
-  //@Column('timestamp')
-  //datetime: Date;
+  @Column('timestamp')
+  datetime: Date;
 
-  //@OneToMany(() => Seat, (seat) => seat.function)
-  //seats: Seat[];
+  @OneToMany(() => Seat, (seat) => seat.function)
+  seats: Seat[];
 
   //@OneToMany(() => Ticket, (ticket) => ticket.function)
   //tickets: Ticket[];

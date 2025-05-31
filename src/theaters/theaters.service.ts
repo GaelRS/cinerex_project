@@ -20,14 +20,14 @@ export class TheatersService {
 
   findAll() {
     return this.theaterRepository.find({
-      // relations: ['functions'], // Uncomment when FunctionEntity is fully connected
+      relations: ['functions'],
     });
   }
 
   async findOne(id: string) {
     const theater = await this.theaterRepository.findOne({
       where: { theaterId: id },
-      // relations: ['functions'],
+      relations: ['functions'],
     });
     if (!theater) throw new NotFoundException(`Theater with ID ${id} not found`);
     return theater;
