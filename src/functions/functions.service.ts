@@ -29,7 +29,7 @@ export class FunctionsService {
         'movie', 
         'theater', 
         'seats', 
-        //'tickets'
+        'tickets'
       ],
     });
   }
@@ -41,7 +41,7 @@ export class FunctionsService {
         'movie', 
         'theater', 
         'seats', 
-        //'tickets'
+        'tickets'
       ],
     });
     if (!func) {
@@ -57,7 +57,7 @@ export class FunctionsService {
         'movie', 
         'theater', 
         'seats', 
-        //'tickets'
+        'tickets'
       ],
     });
   }
