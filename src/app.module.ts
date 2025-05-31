@@ -1,6 +1,4 @@
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { FunctionsModule } from "./functions/functions.module";
 import { TheatersModule } from "./theaters/theaters.module";
@@ -32,7 +30,7 @@ import { SeatsModule } from './seats/seats.module';
     MoviesModule,
     SeatsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

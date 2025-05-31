@@ -20,7 +20,7 @@ export class SeatsService {
           functionId,
           row_letter: row,
           seat_number: num,
-          status: SeatStatus.AVAILABLE
+          status: SeatStatus.AVAILABLE,
         }));
       }
     }
@@ -28,8 +28,7 @@ export class SeatsService {
     return this.seatRepository.save(seats);
   }
 
-   async deleteSeatsForFunction(functionId: string) {
-    // Delete all seats associated with the function
+  async deleteSeatsForFunction(functionId: string) {
     await this.seatRepository.delete({ functionId });
   }
 
@@ -44,7 +43,7 @@ export class SeatsService {
     const seat = await this.seatRepository.findOneBy({
       functionId,
       row_letter: row,
-      seat_number: number
+      seat_number: number,
     });
 
     if (!seat) throw new NotFoundException('Seat not found');
@@ -52,6 +51,23 @@ export class SeatsService {
       throw new BadRequestException('Seat is not available');
 
     seat.status = SeatStatus.SOLD;
+    return this.seatRepository.save(seat);
+  }
+
+  async releaseSeat(functionId: string, row: string, number: number) {
+    const seat = await this.seatRepository.findOneBy({
+      functionId,
+      row_letter: row,
+      seat_number: number,
+    });
+
+    if (!seat) throw new NotFoundException('Seat not found');
+
+    if (seat.status === SeatStatus.AVAILABLE) {
+      return seat;
+    }
+
+    seat.status = SeatStatus.AVAILABLE;
     return this.seatRepository.save(seat);
   }
 }

@@ -29,6 +29,6 @@ export class FunctionEntity {
   @OneToMany(() => Seat, (seat) => seat.function)
   seats: Seat[];
 
-  //@OneToMany(() => Ticket, (ticket) => ticket.function)
-  //tickets: Ticket[];
+  @OneToMany(() => Ticket, (ticket) => ticket.function)
+  tickets: Ticket[];
 }
