@@ -1,13 +1,16 @@
-import { FunctionEntity } from "../entities/function.entity";
+import { ApiProperty } from "@nestjs/swagger";
 import { IsUUID, IsDateString } from 'class-validator';
 
 export class CreateFunctionDto {
+  @ApiProperty()
   @IsUUID()
   movieId: string;
 
+  @ApiProperty()
   @IsUUID()
   theaterId: string;
 
+  @ApiProperty()
   @IsDateString()
   datetime: string;
 
