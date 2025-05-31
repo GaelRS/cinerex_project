@@ -21,6 +21,6 @@ export class Movie {
   @Column('text', { nullable: true })
   poster: string;
 
- // @OneToMany(() => FunctionEntity, (func) => func.movie)
-  //functions: FunctionEntity[];
+  @OneToMany(() => FunctionEntity, (func) => func.movie)
+  functions: FunctionEntity[];
 }
