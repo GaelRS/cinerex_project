@@ -7,14 +7,8 @@ export class Theater {
   theaterId: string;
 
   @Column('text', { unique: true })
-  theaterName: string;
+  theaterNumber: string;
 
-  @Column('char', { length: 1 })
-  last_row_letter: string;
-
-  @Column('int')
-  last_seat_number: number;
-
-  @OneToMany(() => FunctionEntity, (func) => func.theater)
+  //@OneToMany(() => FunctionEntity, (func) => func.theater)
   functions: FunctionEntity[];
 }

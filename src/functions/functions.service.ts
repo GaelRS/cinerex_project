@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFunctionDto } from './dto/create-function.dto';
 import { UpdateFunctionDto } from './dto/update-function.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { FunctionEntity } from './entities/function.entity';
 
 @Injectable()
 export class FunctionsService {
-  create(createFunctionDto: CreateFunctionDto) {
-    return 'This action adds a new function';
+
+  constructor(
+    @InjectRepository(FunctionEntity)
+    private readonly functionRepository: Repository<FunctionEntity>,
+  ) {}
+
+  async create(createFunctionDto: CreateFunctionDto) {
+    const newFunction = this.functionRepository.create(createFunctionDto);
+    return await this.functionRepository.save(newFunction);
   }
 
   findAll() {
-    return `This action returns all functions`;
+    return this.functionRepository.find({
+      //relations: ['movie', 'theater', 'seats', 'tickets'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} function`;
+  async findOne(id: string) {
+    const func = await this.functionRepository.findOne({
+      where: { functionId: id },
+      //relations: ['movie', 'theater', 'seats', 'tickets'],
+    });
+    if (!func) {
+      throw new Error(`Function with ID ${id} not found`);
+    }
+    return func;
   }
 
-  update(id: number, updateFunctionDto: UpdateFunctionDto) {
-    return `This action updates a #${id} function`;
+  async findByMovie(id: string) {
+    return await this.functionRepository.find({
+      where: { movieId: id },
+      //relations: ['movie', 'theater', 'seats', 'tickets'],
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} function`;
+  async update(id: string, updateFunctionDto: UpdateFunctionDto) {
+    const funcToUpdate = await this.functionRepository.preload({
+      functionId: id,
+      ...updateFunctionDto,
+    });
+    if (!funcToUpdate) throw new NotFoundException(`Function with ID ${id} not found`);
+    return await this.functionRepository.save(funcToUpdate);
+  }
+
+  async remove(id: string) {
+    const func = await this.findOne(id);
+    await this.functionRepository.delete({ functionId: id });
+    return {
+      message: `Function with ID ${id} deleted`,
+    };
   }
 }

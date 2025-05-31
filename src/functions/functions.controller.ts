@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { FunctionsService } from './functions.service';
 import { CreateFunctionDto } from './dto/create-function.dto';
 import { UpdateFunctionDto } from './dto/update-function.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('functions')
 @Controller('functions')
 export class FunctionsController {
   constructor(private readonly functionsService: FunctionsService) {}
@@ -18,17 +20,25 @@ export class FunctionsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.functionsService.findOne(+id);
+  findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.functionsService.findOne(id);
+  }
+
+  @Get('movie/:id')
+  findByMovie(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.functionsService.findByMovie(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFunctionDto: UpdateFunctionDto) {
-    return this.functionsService.update(+id, updateFunctionDto);
+  update(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateFunctionDto: UpdateFunctionDto,
+  ) {
+    return this.functionsService.update(id, updateFunctionDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.functionsService.remove(+id);
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.functionsService.remove(id);
   }
 }

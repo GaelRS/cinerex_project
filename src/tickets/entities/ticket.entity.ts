@@ -6,7 +6,7 @@ export class Ticket {
   @PrimaryGeneratedColumn('uuid')
   ticketId: string;
 
-  @ManyToOne(() => FunctionEntity, (func) => func.tickets, { eager: true, onDelete: 'CASCADE' })
+  //@ManyToOne(() => FunctionEntity, (func) => func.tickets, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'functionId' })
   function: FunctionEntity;
 

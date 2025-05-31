@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Theater } from './entities/theater.entity';
 import { CreateTheaterDto } from './dto/create-theater.dto';
 import { UpdateTheaterDto } from './dto/update-theater.dto';
 
 @Injectable()
 export class TheatersService {
-  create(createTheaterDto: CreateTheaterDto) {
-    return 'This action adds a new theater';
+  
+  constructor(
+    @InjectRepository(Theater)
+    private readonly theaterRepository: Repository<Theater>,
+  ) {}
+
+  async create(createTheaterDto: CreateTheaterDto) {
+    const newTheater = this.theaterRepository.create(createTheaterDto);
+    return this.theaterRepository.save(newTheater);
   }
 
   findAll() {
-    return `This action returns all theaters`;
+    return this.theaterRepository.find({
+      // relations: ['functions'], // Uncomment when FunctionEntity is fully connected
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} theater`;
+  async findOne(id: string) {
+    const theater = await this.theaterRepository.findOne({
+      where: { theaterId: id },
+      // relations: ['functions'],
+    });
+    if (!theater) throw new NotFoundException(`Theater with ID ${id} not found`);
+    return theater;
   }
 
-  update(id: number, updateTheaterDto: UpdateTheaterDto) {
-    return `This action updates a #${id} theater`;
+  async update(id: string, updateTheaterDto: UpdateTheaterDto) {
+    const theater = await this.theaterRepository.preload({
+      theaterId: id,
+      ...updateTheaterDto,
+    });
+    if (!theater) throw new NotFoundException(`Theater with ID ${id} not found`);
+    return this.theaterRepository.save(theater);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} theater`;
+  async remove(id: string) {
+    const theater = await this.findOne(id);
+    await this.theaterRepository.delete({ theaterId: id });
+    return { message: `Theater with ID ${id} deleted` };
   }
 }

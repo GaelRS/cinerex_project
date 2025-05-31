@@ -1,12 +1,17 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { FunctionEntity } from 'src/functions/entities/function.entity';
 
+export enum SeatStatus {
+  AVAILABLE = 'AVAILABLE',
+  SOLD = 'SOLD'
+}
+
 @Entity('seats')
 export class Seat {
   @PrimaryGeneratedColumn('uuid')
   seatId: string;
 
-  @ManyToOne(() => FunctionEntity, (func) => func.seats)
+  //@ManyToOne(() => FunctionEntity, (func) => func.seats)
   @JoinColumn({ name: 'functionId' })
   function: FunctionEntity;
 
@@ -19,6 +24,6 @@ export class Seat {
   @Column('int')
   seat_number: number;
 
-  @Column('text')
-  status: string; 
+  @Column({ type: 'enum', enum: SeatStatus, default: SeatStatus.AVAILABLE })
+  status: SeatStatus;
 }
