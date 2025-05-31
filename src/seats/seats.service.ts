@@ -28,6 +28,11 @@ export class SeatsService {
     return this.seatRepository.save(seats);
   }
 
+   async deleteSeatsForFunction(functionId: string) {
+    // Delete all seats associated with the function
+    await this.seatRepository.delete({ functionId });
+  }
+
   async getSeatsByFunction(functionId: string) {
     return this.seatRepository.find({
       where: { functionId },

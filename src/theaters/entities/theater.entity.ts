@@ -9,6 +9,6 @@ export class Theater {
   @Column('text', { unique: true })
   theaterNumber: string;
 
-  //@OneToMany(() => FunctionEntity, (func) => func.theater)
+  @OneToMany(() => FunctionEntity, (func) => func.theater)
   functions: FunctionEntity[];
 }
