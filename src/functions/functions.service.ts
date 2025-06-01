@@ -12,7 +12,7 @@ export class FunctionsService {
   constructor(
     @InjectRepository(FunctionEntity)
     private readonly functionRepository: Repository<FunctionEntity>,
-    private readonly seatsService: SeatsService, // Manage seats
+    private readonly seatsService: SeatsService, 
   ) {}
 
   async create(createFunctionDto: CreateFunctionDto) {
