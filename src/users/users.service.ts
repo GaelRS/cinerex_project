@@ -14,10 +14,18 @@ export class UsersService {
     private jwtService: JwtService
   ) {}
 
-  registerUser(createUserDto: CreateUserDto) {
+  async registerUser(createUserDto: CreateUserDto): Promise<string> {
     createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
     const newUser = this.userRepository.create(createUserDto);
-    return this.userRepository.save(newUser);
+    const savedUser = await this.userRepository.save(newUser);
+
+    const payload = {
+      userName: savedUser.userName,
+      userRole: savedUser.userRole,
+      sub: savedUser.userId, 
+    };
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 
   async loginUser(userName: string, userPassword: string) {
@@ -31,11 +39,11 @@ export class UsersService {
     if (!match) {
       throw new UnauthorizedException("Contraseña incorrecta");
     }
-    const payload ={
+    const payload = {
       userName: user.userName,
-      userPassword: user.userPassword,
       userRole: user.userRole,
-    }
+      sub: user.userId, 
+    };
     const token = this.jwtService.sign(payload);
     return token;
   }

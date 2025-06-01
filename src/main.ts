@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -11,7 +12,7 @@ async function bootstrap() {
       credentials: true,
     },
   });
-
+  app.use(cookieParser());
   const config = new DocumentBuilder()
     .setTitle('Cinerex Project')
     .setDescription('API para el proyecto Cinerex')
