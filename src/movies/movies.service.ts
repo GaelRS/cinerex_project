@@ -23,12 +23,15 @@ export class MoviesService {
   }
 
   findAll() {
-    return this.movieRepository.find();
+    return this.movieRepository.find({
+      relations: ["functions"],
+    });
   }
 
   async findOne(id: string) {
     const movie = await this.movieRepository.findOne({
       where: { movieId: id },
+      relations: ["functions"],
     });
     if (!movie) throw new NotFoundException("Movie not found");
     return movie;

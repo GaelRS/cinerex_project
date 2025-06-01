@@ -32,7 +32,7 @@ export class UsersService {
       throw new UnauthorizedException("Contraseña incorrecta");
     }
     const payload ={
-      userEmail: user.userEmail,
+      userName: user.userName,
       userPassword: user.userPassword,
       userRole: user.userRole,
     }
