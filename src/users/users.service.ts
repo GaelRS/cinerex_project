@@ -47,4 +47,16 @@ export class UsersService {
     const token = this.jwtService.sign(payload);
     return token;
   }
+
+  async getUserInfo(userId: string): Promise<Partial<User>> {
+    const user = await this.userRepository.findOne({ where: { userId } });
+
+    if (!user) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    const { userPassword, ...rest } = user;
+    return rest;
+}
+
 }
