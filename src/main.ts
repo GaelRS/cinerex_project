@@ -4,6 +4,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as cookieParser from 'cookie-parser';
+import { seedAdmin } from './seed/admin.seed';
+import { DataSource } from 'typeorm';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -24,6 +26,12 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
+
+  // Intentar lo del usuario admin al iniciar la aplicación
+  const dataSource = app.get(DataSource);
+  if (process.env.SEED_ADMIN === 'true') {
+    await seedAdmin(dataSource);
+  }
 
   await app.listen(3000);
 }

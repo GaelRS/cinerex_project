@@ -20,6 +20,17 @@ import { TOKEN_NAME } from "./constants/jwt.constants";
 import { Response } from "express";
 import { Cookies } from "./decorators/cookies.decorator";
 import { AuthGuard } from "./guards/user.guard";
+import { Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from './guards/user.guard';
+import { ApiOperation, ApiTags, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
+import { Request } from 'express';
+
+declare module 'express' {
+  interface Request {
+    user?: any;
+  }
+}
+
 
 @Controller("auth")
 export class UsersController {
@@ -66,4 +77,16 @@ async signup(
     })
     return;
   }
+
+  @Get('me')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener información del usuario autenticado' })
+  @ApiResponse({ status: 200, description: 'Usuario retornado exitosamente' })
+  async getMe(@Req() req: Request) {
+    const user = req.user as { sub: string };
+    return this.usersService.getUserInfo(user.sub);
+}
+
+
 }
