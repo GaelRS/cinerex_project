@@ -9,7 +9,7 @@ export class FunctionEntity {
   @PrimaryGeneratedColumn('uuid')
   functionId: string;
 
-  @ManyToOne(() => Movie, (movie) => movie.functions, { eager: true })
+  @ManyToOne(() => Movie, (movie) => movie.functions, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'movieId' })
   movie: Movie;
 
